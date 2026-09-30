@@ -7,6 +7,8 @@
     <application
         android:allowBackup="true"
         android:label="ForgeFit"
+        android:icon="@drawable/ic_launcher"
+        android:roundIcon="@drawable/ic_launcher"
         android:theme="@style/Theme.ForgeFit"
         android:usesCleartextTraffic="false">
         <provider

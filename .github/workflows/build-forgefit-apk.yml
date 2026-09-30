@@ -127,3 +127,21 @@ jobs:
           name: ForgeFit-premium-v2-debug-apk
           path: app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
+
+      - name: Package full project source
+        run: |
+          zip -r ForgeFit-v0.3.0-project.zip . \
+            -x ".git/*" \
+            -x "node_modules/*" \
+            -x "dist/*" \
+            -x "app/build/*" \
+            -x "*.apk" \
+            -x "*.zip"
+
+      - name: Upload project source artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ForgeFit-v0.3.0-project
+          path: ForgeFit-v0.3.0-project.zip
+          if-no-files-found: error
+          retention-days: 90

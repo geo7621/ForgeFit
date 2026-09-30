@@ -1,0 +1,102 @@
+name: Build Uploaded ForgeFit v0.4.0 APK
+
+on:
+  push:
+    branches: [ "forgefit-v0.4.0-upload-build" ]
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Reconstruct exact uploaded v0.4.0 build inputs
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat .github/build-payload/app.00.b64 .github/build-payload/app.01.b64 .github/build-payload/app.02.b64 .github/build-payload/app.03.b64 | base64 -d | bzip2 -dc > src/App.jsx
+          base64 -d .github/build-payload/lock.b64 | bzip2 -dc > package-lock.json
+          base64 -d .github/build-payload/pkg.b64 | bzip2 -dc > package.json
+          base64 -d .github/build-payload/gradle.b64 | bzip2 -dc > app/build.gradle.kts
+          mkdir -p public
+          base64 -d .github/build-payload/visuals.b64 | bzip2 -dc > public/EXERCISE_VISUALS.md
+
+          test "$(git hash-object src/App.jsx)" = "f5e4730d25993dd044330d7c9a287554f9c4164a"
+          test "$(git hash-object package-lock.json)" = "a86ad3b05875a232025e89b4f5c2b574937ba322"
+          test "$(git hash-object package.json)" = "25221784bc85861412bb42c862819170a326526f"
+          test "$(git hash-object app/build.gradle.kts)" = "e5b87ef753baf36552101c6ab5f0f931bd32e8b8"
+          test "$(git hash-object public/EXERCISE_VISUALS.md)" = "9d7257dc96ff183a448382899dcf474907dd84b3"
+
+      - name: Restore exact binary assets from verified prior GitHub artifact
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf /tmp/ff-artifact /tmp/ff-project
+          mkdir -p /tmp/ff-artifact /tmp/ff-project
+          curl -L --fail --retry 4             -H "Authorization: Bearer ${GH_TOKEN}"             -H "Accept: application/vnd.github+json"             "https://api.github.com/repos/${GITHUB_REPOSITORY}/actions/artifacts/11087771683/zip"             -o /tmp/ff-v03-artifact.zip
+          unzip -q /tmp/ff-v03-artifact.zip -d /tmp/ff-artifact
+          INNER="$(find /tmp/ff-artifact -maxdepth 2 -type f -name 'ForgeFit-v0.3.0-project.zip' | head -n1)"
+          test -n "$INNER"
+          unzip -q "$INNER" -d /tmp/ff-project
+
+          rm -rf public/meal-media public/profile-media
+          mkdir -p public
+          cp -R /tmp/ff-project/public/meal-media public/
+          cp -R /tmp/ff-project/public/profile-media public/
+
+          echo "6c611421293a881b9d0372baec74ee6626506cc852d7ba552476b5a8507b4a29  public/meal-media/chicken-rice.jpg" | sha256sum -c -
+          echo "3ab8aa93891077ef819f69a8713c7b8de3e68a3426f373b286799db903540dc0  public/meal-media/oatmeal.jpg" | sha256sum -c -
+          echo "df3a08a60046c7e26affd177186c2696a52691df125b55df288871b8cadca8a7  public/meal-media/salmon.jpg" | sha256sum -c -
+          echo "aad7a0de2988ef209a64c7146c418fdb786c67b2ae052e9505938d913e3d7b72  public/meal-media/yogurt.jpg" | sha256sum -c -
+          echo "388f05885261a375748bca51e305e2516e883d9073854964adff23257b7bd687  public/profile-media/female-back.jpg" | sha256sum -c -
+          echo "f8c90a385f970d7e1e638a67c262820394468e35100a3b61ad7c03f9160c17b4  public/profile-media/female-front.jpg" | sha256sum -c -
+          echo "72abaa152594a3fbfabf1327625fb6b422891df6c1ccf7a1c9e797aa972ffb2b  public/profile-media/male-back.jpg" | sha256sum -c -
+          echo "d82d6bba7d6b45775eef3adf6f101c68f135018ad8844890059643dc10e64d29  public/profile-media/male-front.jpg" | sha256sum -c -
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Build ForgeFit web app
+        run: |
+          npm ci
+          npm run build
+          rm -rf app/src/main/assets/*
+          mkdir -p app/src/main/assets
+          cp -R dist/. app/src/main/assets/
+
+      - name: Set up Java 17
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Install Android platform
+        run: yes | sdkmanager "platforms;android-35" "build-tools;35.0.0"
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.9'
+
+      - name: Build APK
+        run: gradle :app:assembleDebug --stacktrace
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: ForgeFit-v0.4.0-FINAL-debug-apk
+          path: app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error

@@ -8,6 +8,21 @@ import {
 
 const STORAGE_KEY = "forgefit-state";
 
+async function forgeStoreGet(key) {
+  try {
+    if (window.storage && window.storage.get) return await window.storage.get(key, false);
+  } catch (_) {}
+  const value = localStorage.getItem(key);
+  return value == null ? null : { value };
+}
+async function forgeStoreSet(key, value) {
+  try {
+    if (window.storage && window.storage.set) return await window.storage.set(key, value, false);
+  } catch (_) {}
+  localStorage.setItem(key, value);
+  return { value };
+}
+
 /* ---------------------------------- THEME ---------------------------------- */
 const C_DARK = {
   bg: "#030405",
@@ -1276,44 +1291,56 @@ function GlassStat({label,value}){return <div className="glassInset p-3"><div cl
 function OverviewBlock({icon,title,children}){return <div className="liquidCard p-4 mb-3"><div className="flex items-center gap-2 mb-2 text-sm font-semibold" style={{color:C.blueBright}}>{icon}{title}</div><div className="text-xs leading-relaxed" style={{color:C.steel}}>{children}</div></div>}
 
 
-const EXERCISE_MEDIA_BY_PATTERN = {
-  raise: { file: "lateral-raise.jpg", source: "DumbbellLateralRaise.JPG", credit: "George Stepanek", license: "CC BY-SA 3.0" },
-  press: { file: "shoulder-press.jpg", source: "Strong woman performs shoulder press exercise in fitness gym during afternoon workout session.jpg", credit: "Nenad Stojković", license: "CC BY 2.0" },
-  flye: { file: "cable-fly.jpg", source: "Chest flies with cable machine - cable crossover flies.jpg", credit: "Nenad Stojković", license: "CC BY 2.0" },
-  dip: { file: "dip.jpg", source: "Dip Exercise.jpg", credit: "Fort Drum & 10th Mountain Division", license: "Public domain" },
-  pushup: { file: "pushup.jpg", source: "Airman doing pushup.JPG", credit: "U.S. Air Force / A1C Grace Lee", license: "Public domain" },
-  extension: { file: "triceps-extension.jpg", source: "Role doing cable tricep extension exercise.jpg", credit: "PTPioneer", license: "Wikimedia Commons" },
-  pulldown: { file: "lat-pulldown.jpg", source: "Back Pull down.jpg", credit: "Aliva Sahoo", license: "CC BY-SA 4.0" },
-  row: { file: "cable-row.jpg", source: "Woman using a seated cable row machine at the gym.jpg", credit: "Miguel Angel Omaña Rojas", license: "Wikimedia Commons" },
-  curl: { file: "biceps-curl.jpg", source: "Bicep Curl.jpg", credit: "Hipnotic88", license: "Wikimedia Commons" },
-  legext: { file: "leg-extension.jpg", source: "Leg Extension.jpg", credit: "Aliva Sahoo", license: "CC BY-SA 4.0" },
-  squat: { file: "lunge.jpg", source: "Fitness enthusiast performing a lunge exercise with a weight plate in a gym environment.jpg", credit: "Nenad Stojković", license: "CC BY 2.0" },
-  legcurl: { file: "leg-curl.jpg", source: "LyingLegCurlMachineExercise.JPG", credit: "George Stepanek", license: "CC BY-SA 3.0" },
-  hinge: { file: "lunge.jpg", source: "Fitness enthusiast performing a lunge exercise with a weight plate in a gym environment.jpg", credit: "Nenad Stojković", license: "CC BY 2.0" },
-  thrust: { file: "leg-press.jpg", source: "Young man using a leg press machine at the gym.jpg", credit: "Nenad Stojković", license: "CC BY 2.0" },
-  kickback: { file: "lunge.jpg", source: "Fitness enthusiast performing a lunge exercise with a weight plate in a gym environment.jpg", credit: "Nenad Stojković", license: "CC BY 2.0" },
-  lateral: { file: "lateral-raise.jpg", source: "DumbbellLateralRaise.JPG", credit: "George Stepanek", license: "CC BY-SA 3.0" },
-  facepull: { file: "cable-row.jpg", source: "Woman using a seated cable row machine at the gym.jpg", credit: "Miguel Angel Omaña Rojas", license: "Wikimedia Commons" },
-  calf: { file: "calf-raise.jpg", source: "SeatedCalfRaiseMachineExercise.JPG", credit: "George Stepanek", license: "CC BY-SA 3.0" },
+const EXERCISE_MEDIA_MALE = {
+  raise: { file: "male-shoulder.jpg", source: "Pexels 7289370", credit: "Alesia Kozik / Pexels", license: "Pexels License" },
+  press: { file: "male-shoulder.jpg", source: "Pexels 7289370", credit: "Alesia Kozik / Pexels", license: "Pexels License" },
+  flye: { file: "male-cable.jpg", source: "Pexels 32695897", credit: "Asso Myron / Pexels", license: "Pexels License" },
+  dip: { file: "male-dip.jpg", source: "Dubai workout (Unsplash).jpg", credit: "Keit Trysh / Wikimedia Commons", license: "CC0/Unsplash archive" },
+  pushup: { file: "male-pushup.jpg", source: "Airman doing pushup.JPG", credit: "U.S. Air Force", license: "Public domain" },
+  extension: { file: "male-triceps.jpg", source: "Pexels 5327510", credit: "Tima Miroshnichenko / Pexels", license: "Pexels License" },
+  pulldown: { file: "male-pulldown.jpg", source: "Common Lat Pulldown Mistakes.webm reference", credit: "Andrew Kwong / Wikimedia Commons", license: "CC" },
+  row: { file: "male-row.jpg", source: "Pexels 10551491", credit: "Alexa Popovich / Pexels", license: "Pexels License" },
+  curl: { file: "male-curl.jpg", source: "Pexels 4162480", credit: "Ivan S / Pexels", license: "Pexels License" },
+  legext: { file: "male-legpress.jpg", source: "Pexels 19254709", credit: "Jean-Daniel Francoeur / Pexels", license: "Pexels License" },
+  squat: { file: "male-squat.jpg", source: "Pexels 5327530", credit: "Tima Miroshnichenko / Pexels", license: "Pexels License" },
+  legcurl: { file: "male-legpress.jpg", source: "Pexels 19254709", credit: "Jean-Daniel Francoeur / Pexels", license: "Pexels License" },
+  hinge: { file: "male-squat.jpg", source: "Pexels 5327530", credit: "Tima Miroshnichenko / Pexels", license: "Pexels License" },
+  thrust: { file: "male-legpress.jpg", source: "Pexels 19254709", credit: "Jean-Daniel Francoeur / Pexels", license: "Pexels License" },
+  kickback: { file: "male-squat.jpg", source: "Pexels 5327530", credit: "Tima Miroshnichenko / Pexels", license: "Pexels License" },
+  lateral: { file: "male-shoulder.jpg", source: "Pexels 7289370", credit: "Alesia Kozik / Pexels", license: "Pexels License" },
+  facepull: { file: "male-row.jpg", source: "Pexels 10551491", credit: "Alexa Popovich / Pexels", license: "Pexels License" },
+  calf: { file: "male-legpress.jpg", source: "Pexels 19254709", credit: "Jean-Daniel Francoeur / Pexels", license: "Pexels License" },
 };
 
-const EXERCISE_MEDIA_BY_ID = {
-  "chest-1": { file: "bench-press.jpg", source: "Bench Press (4517332).jpg", credit: "U.S. Army / 173rd Airborne Brigade", license: "Public domain" },
-  "chest-2": { file: "cable-fly.jpg", source: "Chest flies with cable machine - cable crossover flies.jpg", credit: "Nenad Stojković", license: "CC BY 2.0" },
-  "chest-3": { file: "shoulder-press.jpg", source: "Strong woman performs shoulder press exercise in fitness gym during afternoon workout session.jpg", credit: "Nenad Stojković", license: "CC BY 2.0" },
-  "chest-5": { file: "dip.jpg", source: "Dip Exercise.jpg", credit: "Fort Drum & 10th Mountain Division", license: "Public domain" },
-  "chest-6": { file: "pushup.jpg", source: "Airman doing pushup.JPG", credit: "U.S. Air Force / A1C Grace Lee", license: "Public domain" },
-  "tri-1": { file: "triceps-extension.jpg", source: "Role doing cable tricep extension exercise.jpg", credit: "PTPioneer", license: "Wikimedia Commons" },
-  "back-warmup": { file: "lat-pulldown.jpg", source: "Back Pull down.jpg", credit: "Aliva Sahoo", license: "CC BY-SA 4.0" },
-  "back-4": { file: "cable-row.jpg", source: "Woman using a seated cable row machine at the gym.jpg", credit: "Miguel Angel Omaña Rojas", license: "Wikimedia Commons" },
-  "bi-1": { file: "biceps-curl.jpg", source: "Bicep Curl.jpg", credit: "Hipnotic88", license: "Wikimedia Commons" },
-  "quad-2": { file: "leg-press.jpg", source: "Young man using a leg press machine at the gym.jpg", credit: "Nenad Stojković", license: "CC BY 2.0" },
-  "quad-6": { file: "lunge.jpg", source: "Fitness enthusiast performing a lunge exercise with a weight plate in a gym environment.jpg", credit: "Nenad Stojković", license: "CC BY 2.0" },
-  "ham-4": { file: "leg-curl.jpg", source: "LyingLegCurlMachineExercise.JPG", credit: "George Stepanek", license: "CC BY-SA 3.0" },
-  "sh-1": { file: "lateral-raise.jpg", source: "DumbbellLateralRaise.JPG", credit: "George Stepanek", license: "CC BY-SA 3.0" },
-  "sh-2": { file: "shoulder-press.jpg", source: "Strong woman performs shoulder press exercise in fitness gym during afternoon workout session.jpg", credit: "Nenad Stojković", license: "CC BY 2.0" },
-  "calf-2": { file: "calf-raise.jpg", source: "SeatedCalfRaiseMachineExercise.JPG", credit: "George Stepanek", license: "CC BY-SA 3.0" },
+const EXERCISE_MEDIA_FEMALE = {
+  raise: { file: "female-shoulder.jpg", source: "Strong woman performs shoulder press exercise in fitness gym during afternoon workout session.jpg", credit: "Shixart1985 / Wikimedia Commons", license: "CC" },
+  press: { file: "female-shoulder.jpg", source: "Strong woman performs shoulder press exercise in fitness gym during afternoon workout session.jpg", credit: "Shixart1985 / Wikimedia Commons", license: "CC" },
+  flye: { file: "female-row.jpg", source: "Woman using a seated cable row machine at the gym.jpg", credit: "Miguel Angel Omaña Rojas / Wikimedia Commons", license: "Wikimedia Commons" },
+  dip: { file: "female-gym.jpg", source: "Woman exercising in the gym.jpg", credit: "Nenad Stojkovic / Wikimedia Commons", license: "CC BY 2.0" },
+  pushup: { file: "female-gym.jpg", source: "Woman exercising in the gym.jpg", credit: "Nenad Stojkovic / Wikimedia Commons", license: "CC BY 2.0" },
+  extension: { file: "female-row.jpg", source: "Woman using a seated cable row machine at the gym.jpg", credit: "Miguel Angel Omaña Rojas / Wikimedia Commons", license: "Wikimedia Commons" },
+  pulldown: { file: "female-row.jpg", source: "Woman using a seated cable row machine at the gym.jpg", credit: "Miguel Angel Omaña Rojas / Wikimedia Commons", license: "Wikimedia Commons" },
+  row: { file: "female-row.jpg", source: "Woman using a seated cable row machine at the gym.jpg", credit: "Miguel Angel Omaña Rojas / Wikimedia Commons", license: "Wikimedia Commons" },
+  curl: { file: "female-gym.jpg", source: "Woman exercising in the gym.jpg", credit: "Nenad Stojkovic / Wikimedia Commons", license: "CC BY 2.0" },
+  legext: { file: "female-leg.jpg", source: "Woman playing weights with legs on the exercise machine in the gym.jpg", credit: "Nenad Stojkovic / Wikimedia Commons", license: "CC BY 2.0" },
+  squat: { file: "female-squat.jpg", source: "Woman doing squat workout in gym with barbell.jpg", credit: "Nenad Stojkovic / Wikimedia Commons", license: "CC BY 2.0" },
+  legcurl: { file: "female-leg.jpg", source: "Woman playing weights with legs on the exercise machine in the gym.jpg", credit: "Nenad Stojkovic / Wikimedia Commons", license: "CC BY 2.0" },
+  hinge: { file: "female-squat.jpg", source: "Woman doing squat workout in gym with barbell.jpg", credit: "Nenad Stojkovic / Wikimedia Commons", license: "CC BY 2.0" },
+  thrust: { file: "female-leg.jpg", source: "Woman playing weights with legs on the exercise machine in the gym.jpg", credit: "Nenad Stojkovic / Wikimedia Commons", license: "CC BY 2.0" },
+  kickback: { file: "female-leg.jpg", source: "Woman playing weights with legs on the exercise machine in the gym.jpg", credit: "Nenad Stojkovic / Wikimedia Commons", license: "CC BY 2.0" },
+  lateral: { file: "female-shoulder.jpg", source: "Strong woman performs shoulder press exercise in fitness gym during afternoon workout session.jpg", credit: "Shixart1985 / Wikimedia Commons", license: "CC" },
+  facepull: { file: "female-row.jpg", source: "Woman using a seated cable row machine at the gym.jpg", credit: "Miguel Angel Omaña Rojas / Wikimedia Commons", license: "Wikimedia Commons" },
+  calf: { file: "female-leg.jpg", source: "Woman playing weights with legs on the exercise machine in the gym.jpg", credit: "Nenad Stojkovic / Wikimedia Commons", license: "CC BY 2.0" },
 };
+
+const EXERCISE_MEDIA_ID_MALE = {
+  "chest-1": { file: "male-bench.jpg", source: "Pexels 14598861", credit: "Viridiana Rivera / Pexels", license: "Pexels License" },
+  "chest-2": { file: "male-cable.jpg", source: "Pexels 32695897", credit: "Asso Myron / Pexels", license: "Pexels License" },
+  "quad-2": { file: "male-legpress.jpg", source: "Pexels 19254709", credit: "Jean-Daniel Francoeur / Pexels", license: "Pexels License" },
+  "quad-6": { file: "male-squat.jpg", source: "Pexels 5327530", credit: "Tima Miroshnichenko / Pexels", license: "Pexels License" },
+  "bi-1": { file: "male-curl.jpg", source: "Pexels 4162480", credit: "Ivan S / Pexels", license: "Pexels License" },
+};
+const EXERCISE_MEDIA_ID_FEMALE = {};
 
 function localExerciseMediaUrl(file) {
   return `./exercise-media/${file}`;
@@ -1322,8 +1349,11 @@ function commonsPageUrl(file) {
   return `https://commons.wikimedia.org/wiki/File:${encodeURIComponent(file.replace(/ /g, "_"))}`;
 }
 
-function ForgeExerciseVisual({ ex, lang }) {
-  const media = EXERCISE_MEDIA_BY_ID[ex.id] || EXERCISE_MEDIA_BY_PATTERN[ex.pattern] || EXERCISE_MEDIA_BY_PATTERN.press;
+function ForgeExerciseVisual({ ex, lang, sex }) {
+  const female = sex === "female";
+  const idMap = female ? EXERCISE_MEDIA_ID_FEMALE : EXERCISE_MEDIA_ID_MALE;
+  const patternMap = female ? EXERCISE_MEDIA_FEMALE : EXERCISE_MEDIA_MALE;
+  const media = idMap[ex.id] || patternMap[ex.pattern] || patternMap.press;
   const [mediaFailed, setMediaFailed] = useState(false);
   useEffect(() => setMediaFailed(false), [media.file]);
   const realLabel = lang === "ka" ? "რეალური საცნობარო მასალა" : "Real exercise reference";
@@ -1396,7 +1426,7 @@ export default function App() {
   const [splashDone, setSplashDone] = useState(false);
   const mountTimeRef = useRef(Date.now());
   const [state, setState] = useState(DEFAULT_STATE);
-  const [tab, setTab] = useState("train");
+  const [tab, setTab] = useState("dashboard");
   const [view, setView] = useState("home");
   const [activeDayFocus, setActiveDayFocus] = useState(null);
   const [activeMuscle, setActiveMuscle] = useState(null);
@@ -1419,7 +1449,7 @@ export default function App() {
   useEffect(() => {
     (async () => {
       try {
-        const res = await window.storage.get(STORAGE_KEY, false);
+        const res = await forgeStoreGet(STORAGE_KEY);
         if (res && res.value) {
           const parsed = JSON.parse(res.value);
           const today = todayStr();
@@ -1464,7 +1494,7 @@ export default function App() {
     if (!loaded) return;
     if (!dirty.current) { dirty.current = true; return; }
     (async () => {
-      try { await window.storage.set(STORAGE_KEY, JSON.stringify(state), false); }
+      try { await forgeStoreSet(STORAGE_KEY, JSON.stringify(state)); }
       catch (e) { console.error("Couldn't save your progress.", e); }
     })();
   }, [state, loaded]);
@@ -1784,7 +1814,7 @@ export default function App() {
             <div className="disp text-lg leading-none font-semibold" style={{ color: C.text }}>
               {view === "day" ? L(FOCUS_LABEL[activeDayFocus], lang) : view === "muscle" ? L(MUSCLE_LABEL[activeMuscle], lang) : t.appName}
             </div>
-            {view === "home" && <div className="text-[11px]" style={{ color: C.steel }}>{L(SPLIT_LABEL[profile.split], lang)} · {profile.daysPerWeek}x</div>}
+            {view === "home" && <div className="text-[11px]" style={{ color: C.steel }}>{tab==="train" ? `${L(SPLIT_LABEL[profile.split], lang)} · ${profile.daysPerWeek}x` : tab==="dashboard" ? (lang==="ka"?"შენი ყოველდღიური ცენტრი":"Your daily command center") : tab==="nutrition" ? (lang==="ka"?"კვება და მაკროები":"Meals & macros") : tab==="progress" ? (lang==="ka"?"ფორმა და პროგრესი":"Physique & progress") : tab==="cardio" ? t.navCardio : (lang==="ka"?"პარამეტრები და მეტი":"Settings & more")}</div>}
           </div>
         </div>
         <div className="flex items-center gap-1 px-3 py-1.5 rounded-full" style={{ background: C.glass, border: `1.5px solid ${C.border}`, backdropFilter: "blur(20px) saturate(180%)" }}>
@@ -1794,6 +1824,12 @@ export default function App() {
       </div>
 
       <div className="relative flex-1 overflow-y-auto px-5 pb-36 pt-4">
+        {view === "home" && tab === "dashboard" && (
+          <DashboardView t={t} lang={lang} profile={profile} state={state} targets={targets} todayFocus={todayFocus} todayExercises={todayExercises} doneToday={doneToday} progressOf={progressOf}
+            onWorkout={() => { setTab("train"); setView("home"); if (todayFocus !== "rest") { setActiveDayFocus(todayFocus); setProgramPreview(true); } }}
+            onNutrition={() => { setTab("nutrition"); setView("home"); }}
+            onPhysique={() => { setTab("progress"); setView("home"); }} />
+        )}
         {view === "home" && tab === "train" && !programPreview && (
           <TrainHome
             t={t} lang={lang} profile={profile} weekFocus={weekFocus} todayIdx={todayIdx} todayFocus={todayFocus}
@@ -1811,7 +1847,7 @@ export default function App() {
         )}
         {(view === "day" || view === "muscle") && (
           <ExerciseListView
-            t={t} lang={lang} weightUnit={profile.weightUnit} exList={activeExList}
+            t={t} lang={lang} sex={profile.sex} weightUnit={profile.weightUnit} exList={activeExList}
             getSetArray={getSetArray} toggleSet={toggleSet} state={state} setBest={setBest} setGoal={setGoal}
             progressOf={progressOf} finishWorkout={finishWorkout}
             onDislike={view === "day" ? dislikeExercise : null}
@@ -1829,7 +1865,7 @@ export default function App() {
           <ProgressView t={t} lang={lang} weightUnit={profile.weightUnit} sex={profile.sex} profile={profile} state={state} streak={streak} longest={longest} logRecovery={logRecovery} />
         )}
         {tab === "profile" && view === "home" && (
-          <ProfileView t={t} lang={lang} draftProfile={draftProfile} setDraftProfile={setDraftProfile} onSave={saveProfile} setLang={setLang} setTheme={setTheme} onShowEquipment={() => setShowEquipment(true)}
+          <ProfileView t={t} lang={lang} draftProfile={draftProfile} setDraftProfile={setDraftProfile} onSave={saveProfile} setLang={setLang} setTheme={setTheme} onShowEquipment={() => setShowEquipment(true)} onOpenCardio={() => { setTab("cardio"); setView("home"); }}
             dislikedIds={state.dislikedIds} onRestore={restoreExercise} />
         )}
       </div>
@@ -1880,21 +1916,32 @@ export default function App() {
       {showEquipment && <EquipmentModal t={t} lang={lang} profile={profile} onSave={(list) => { saveEquipment(list); setShowEquipment(false); }} onClose={() => setShowEquipment(false)} />}
       {showChat && <ChatModal t={t} lang={lang} contextText={buildCoachContext(state, profile, todayExercises, lang)} onClose={() => setShowChat(false)} onApplySchedule={applyScheduleOverride} />}
 
-      <div className="fixed left-0 right-0 z-40 flex justify-center px-5" style={{bottom:14,pointerEvents:"none"}}>
+      <div className="fixed left-0 right-0 z-40 flex justify-center px-4" style={{bottom:12,pointerEvents:"none"}}>
         <div className="ffDock w-full max-w-md flex items-stretch p-1.5 rounded-[30px]" style={{pointerEvents:"auto"}}>
-          {(() => { const nav=[
-            { key: "train", icon: Dumbbell, label: t.navTrain },
-            { key: "nutrition", icon: Utensils, label: t.navNutrition },
-            { key: "cardio", icon: Gauge, label: t.navCardio },
-            { key: "progress", icon: BarChart3, label: t.navProgress },
-            { key: "profile", icon: User, label: t.navProfile },
-          ]; const activeIndex=Math.max(0,nav.findIndex(n=>n.key===tab)); return <>
-            <div className="ffDockSlider" style={{transform:`translateX(${activeIndex*100}%)`}} />
-            {nav.map(({ key, icon: Icon, label }) => { const active=tab===key; return <button key={key} onClick={() => { setTab(key); setView("home"); }} className={`${active?"ffDockActive":""} ffDockBtn flex-1 flex flex-col items-center justify-center gap-1 py-2.5 rounded-[23px] min-w-0`}>
-              <Icon size={20} strokeWidth={active?2.7:2.05} color={active?"#F8FBFF":C.steel} />
-              <span className="text-[9px] font-semibold truncate max-w-full px-1" style={{ color: active?"#F8FBFF":C.steel }}>{label}</span>
-            </button>})}</> })()}
+          {(() => {
+            const nav=[
+              { key:"train", icon:Dumbbell, label:lang==="ka"?"ვარჯიში":"Workout" },
+              { key:"nutrition", icon:Utensils, label:lang==="ka"?"კვება":"Nutrition" },
+              { key:"dashboard", icon:HomeIcon, label:lang==="ka"?"მთავარი":"Dashboard" },
+              { key:"progress", icon:Award, label:lang==="ka"?"ფორმა":"Physique" },
+              { key:"profile", icon:User, label:lang==="ka"?"მეტი":"More" },
+            ];
+            const effectiveKey = tab==="cardio" ? "profile" : tab;
+            const activeIndex=Math.max(0,nav.findIndex(n=>n.key===effectiveKey));
+            return <>
+              <div className="ffDockSlider" style={{transform:`translateX(${activeIndex*100}%)`}} />
+              {nav.map(({key,icon:Icon,label},idx)=>{
+                const active=effectiveKey===key;
+                const center=idx===2;
+                return <button key={key} onClick={()=>{setTab(key);setView("home");setProgramPreview(false);}} className={`${active?"ffDockActive":""} ffDockBtn flex-1 flex flex-col items-center justify-center gap-1 py-2.5 rounded-[23px] min-w-0`} style={center?{transform:"translateY(-1px)"}:undefined}>
+                  <Icon size={center?21:19} strokeWidth={active?2.8:2.05} color={active?"#F8FBFF":C.steel}/>
+                  <span className="text-[9px] font-semibold truncate max-w-full px-1" style={{color:active?"#F8FBFF":C.steel}}>{label}</span>
+                </button>
+              })}
+            </>;
+          })()}
         </div>
+      </div>
       </div>
     </div>
   );
@@ -2091,6 +2138,61 @@ function SegButton({ options, value, onChange, vertical }) {
   );
 }
 
+function DashboardView({ t, lang, profile, state, targets, todayFocus, todayExercises, doneToday, progressOf, onWorkout, onNutrition, onPhysique }) {
+  const hour = new Date().getHours();
+  const greeting = lang === "ka"
+    ? (hour < 12 ? "დილა მშვიდობისა" : hour < 18 ? "შუადღე მშვიდობისა" : "საღამო მშვიდობისა")
+    : (hour < 12 ? "Good Morning" : hour < 18 ? "Good Afternoon" : "Good Evening");
+  const name = profile.name || (lang === "ka" ? "სპორტსმენო" : "Athlete");
+  const pct = Math.round(progressOf(todayExercises) * 100);
+  const today = todayStr();
+  const logged = (state.foodLog[today] || []).reduce((s,e)=>s+(e.kcal||0),0);
+  const nutritionPct = Math.min(100, Math.round((logged / Math.max(1, targets.kcal))*100));
+  const water = state.hydrationDate === today ? state.hydrationMl : 0;
+  const waterGoal = Math.max(1800, Math.round((profile.weightKg || 70)*33));
+  const waterPct = Math.min(100, Math.round((water/waterGoal)*100));
+  const level = computeLevel(state.xp || 0);
+  const hero = profile.sex === "female" ? "./profile-media/female-front.jpg" : "./profile-media/male-front.jpg";
+  const Ring = ({value,label,sub}) => <div className="text-center">
+    <div className="mx-auto grid place-items-center" style={{width:72,height:72,borderRadius:"50%",background:`conic-gradient(${C.blue} ${value*3.6}deg,rgba(255,255,255,.08) 0)`,boxShadow:"0 0 24px rgba(76,141,255,.12)"}}>
+      <div className="grid place-items-center" style={{width:58,height:58,borderRadius:"50%",background:C.card,color:C.text}}><span className="disp text-sm font-bold">{value}%</span></div>
+    </div>
+    <div className="text-[11px] font-semibold mt-2" style={{color:C.text}}>{label}</div>
+    <div className="text-[9px]" style={{color:C.steel}}>{sub}</div>
+  </div>;
+  return <div>
+    <div className="relative overflow-hidden rounded-[30px] mb-5" style={{minHeight:260,background:"linear-gradient(135deg,#060A12,#071428 58%,#06101D)",border:`1px solid ${C.border}`,boxShadow:"inset 0 1px 0 rgba(255,255,255,.12),0 22px 55px rgba(0,0,0,.32)"}}>
+      <img src={hero} alt="" style={{position:"absolute",right:-22,bottom:0,width:"58%",height:"100%",objectFit:"cover",objectPosition:"center top",filter:"saturate(.8) contrast(1.08)"}}/>
+      <div style={{position:"absolute",inset:0,background:"linear-gradient(90deg,rgba(4,7,13,.98) 0%,rgba(4,7,13,.86) 48%,rgba(4,7,13,.10) 78%)"}}/>
+      <div className="relative p-5" style={{width:"68%"}}>
+        <div className="text-sm" style={{color:C.steel}}>{greeting},</div>
+        <div className="disp text-3xl font-bold mt-1" style={{color:C.text}}>{name} 👋</div>
+        <div className="text-sm leading-relaxed mt-4" style={{color:C.steel}}>{lang==="ka"?"დღევანდელი დისციპლინა ქმნის ხვალინდელ ძალას.":"Discipline today builds the stronger you tomorrow."}</div>
+        <button onClick={onWorkout} className="liquidPrimary mt-5 px-4 py-2.5 rounded-xl text-sm font-bold">{lang==="ka"?"ვარჯიშზე გადასვლა":"Start today's workout"}</button>
+      </div>
+    </div>
+
+    <button onClick={onWorkout} className="w-full flex items-center gap-3 p-3 rounded-2xl mb-5 text-left" style={{background:C.glass,border:`1px solid ${C.border}`}}>
+      <img src={profile.sex==="female"?"./exercise-media/female-shoulder.jpg":"./exercise-media/male-bench.jpg"} style={{width:74,height:64,objectFit:"cover",borderRadius:14}}/>
+      <div className="flex-1"><div className="text-[10px] uppercase tracking-widest" style={{color:C.blueBright}}>{lang==="ka"?"მიმდინარე პროგრამა":"Current Program"}</div><div className="font-semibold" style={{color:C.text}}>{L(SPLIT_LABEL[profile.split],lang)}</div><div className="text-[11px]" style={{color:C.steel}}>{todayFocus==="rest"?t.restDay:L(FOCUS_LABEL[todayFocus],lang)} · {todayExercises.length} {lang==="ka"?"ვარჯიში":"exercises"}</div></div>
+      <ChevronRight size={18} color={C.steel}/>
+    </button>
+
+    <div className="disp text-lg font-semibold mb-3" style={{color:C.text}}>{lang==="ka"?"დღევანდელი პროგრესი":"Today's Progress"}</div>
+    <div className="grid grid-cols-3 gap-3 p-4 rounded-[26px] mb-5" style={{background:C.glass,border:`1px solid ${C.border}`}}>
+      <Ring value={doneToday?100:pct} label={lang==="ka"?"ვარჯიში":"Workout"} sub={doneToday?"1/1":`${pct}%`} />
+      <Ring value={nutritionPct} label={lang==="ka"?"კვება":"Nutrition"} sub={`${Math.round(logged)} kcal`} />
+      <Ring value={waterPct} label={lang==="ka"?"წყალი":"Water"} sub={`${(water/1000).toFixed(1)} / ${(waterGoal/1000).toFixed(1)} L`} />
+    </div>
+
+    <button onClick={onPhysique} className="w-full p-4 rounded-[26px] text-left overflow-hidden relative" style={{background:"linear-gradient(135deg,rgba(76,141,255,.15),rgba(255,255,255,.035))",border:`1px solid ${C.borderStrong}`}}>
+      <div className="flex items-center justify-between mb-2"><div><div className="text-[10px] uppercase tracking-widest" style={{color:C.blueBright}}>{lang==="ka"?"ფიზიკური დონე":"Physique Level"}</div><div className="disp text-2xl font-bold" style={{color:C.text}}>Level {level.level}</div></div><Award size={28} color="#FFD166"/></div>
+      <div className="h-2 rounded-full" style={{background:"rgba(255,255,255,.08)"}}><div className="h-2 rounded-full forgeGlow" style={{width:level.pct+"%",background:C.blue}}/></div>
+      <div className="text-[10px] mt-1" style={{color:C.steel}}>{level.xpInLevel} / {level.xpForNext} XP</div>
+    </button>
+  </div>;
+}
+
 /* ---------------------------------- TRAIN HOME ---------------------------------- */
 function TrainHome({ t, lang, profile, weekFocus, todayIdx, todayFocus, todayExercises, doneToday, streak, progressOf, onOpenDay, onOpenMuscle, onShowGuide, onShowEquipment, onShowChat, coach }) {  const pct = Math.round(progressOf(todayExercises) * 100);
   const [showCoachWhy, setShowCoachWhy] = useState(false);
@@ -2177,7 +2279,7 @@ function TrainHome({ t, lang, profile, weekFocus, todayIdx, todayFocus, todayExe
 }
 
 /* ---------------------------------- EXERCISE LIST / DETAIL ---------------------------------- */
-function ExerciseListView({ t, lang, weightUnit, exList, getSetArray, toggleSet, state, setBest, setGoal, progressOf, finishWorkout, onDislike }) {
+function ExerciseListView({ t, lang, sex, weightUnit, exList, getSetArray, toggleSet, state, setBest, setGoal, progressOf, finishWorkout, onDislike }) {
   const pct = Math.round(progressOf(exList) * 100);
   if (exList.length === 0) return <div className="text-sm p-4 rounded-2xl" style={{ background: C.glass, color: C.steel, border: `1.5px solid ${C.border}` }}>{t.noEquipMatch}</div>;
   return (
@@ -2188,7 +2290,7 @@ function ExerciseListView({ t, lang, weightUnit, exList, getSetArray, toggleSet,
       </div>
       <div className="flex flex-col gap-4">
         {exList.map((ex) => (
-          <ExerciseCard key={ex.id} t={t} lang={lang} weightUnit={weightUnit} ex={ex} checks={getSetArray(ex.id, ex.sets)} onToggle={toggleSet(ex)}
+          <ExerciseCard key={ex.id} t={t} lang={lang} sex={sex} weightUnit={weightUnit} ex={ex} checks={getSetArray(ex.id, ex.sets)} onToggle={toggleSet(ex)}
             best={state.best[ex.id]} goal={state.goals[ex.id]} setBest={(v) => setBest(ex.id, v)} setGoal={(v) => setGoal(ex.id, v)}
             onDislike={onDislike} />
         ))}
@@ -2199,7 +2301,7 @@ function ExerciseListView({ t, lang, weightUnit, exList, getSetArray, toggleSet,
   );
 }
 
-function ExerciseCard({ t, lang, weightUnit, ex, checks, onToggle, best, goal, setBest, setGoal, onDislike }) {
+function ExerciseCard({ t, lang, sex, weightUnit, ex, checks, onToggle, best, goal, setBest, setGoal, onDislike }) {
   const [showAlt, setShowAlt] = useState(false);
   const goalKg = parseFloat(goal), bestKg = parseFloat(best);
   const hasGoal = !isNaN(goalKg) && goalKg > 0;
@@ -2232,7 +2334,7 @@ function ExerciseCard({ t, lang, weightUnit, ex, checks, onToggle, best, goal, s
         </div>
       </div>
 
-      <ForgeExerciseVisual ex={ex} lang={lang} />
+      <ForgeExerciseVisual ex={ex} lang={lang} sex={sex} />
       <div className="text-[10px] mt-1 italic" style={{ color: C.steel, opacity: 0.7 }}>{lang === "ka" ? "ფოტო/ვიდეო არის საცნობარო ვიზუალი; ზუსტი მოძრაობის მიმართულება ნაჩვენებია ქვემოთ." : "Photo/video is a visual reference; the exact movement path is shown below."}</div>
 
       {ex.setup && (
@@ -2312,6 +2414,36 @@ function SetupGuide({ t, onClose }) {
   );
 }
 
+const MEAL_VISUALS = {
+  breakfast: "./meal-media/oatmeal.jpg",
+  lunch: "./meal-media/chicken-rice.jpg",
+  snack: "./meal-media/yogurt.jpg",
+  dinner: "./meal-media/salmon.jpg",
+};
+function NutritionTimeline({ t, lang, plan }) {
+  const order = ["breakfast","lunch","snack","dinner"];
+  const times = { breakfast:"08:00", lunch:"12:30", snack:"17:00", dinner:"20:00" };
+  return (
+    <div className="mb-6">
+      <div className="disp text-lg font-semibold mb-3" style={{color:C.text}}>{lang==="ka"?"დღის კვება":"Today's meals"}</div>
+      <div className="flex flex-col gap-2">
+        {order.map((key) => {
+          const meal = plan && plan.meals ? plan.meals.find(m=>m.key===key) : null;
+          return <div key={key} className="flex items-center gap-3 p-2.5 rounded-2xl" style={{background:C.glass,border:`1px solid ${C.border}`}}>
+            <img src={MEAL_VISUALS[key]} alt={t[key]} style={{width:74,height:64,objectFit:"cover",borderRadius:14,border:`1px solid ${C.border}`}}/>
+            <div className="flex-1 min-w-0">
+              <div className="text-[10px]" style={{color:C.blueBright}}>{times[key]}</div>
+              <div className="font-semibold text-sm" style={{color:C.text}}>{t[key]}</div>
+              <div className="text-[11px] truncate" style={{color:C.steel}}>{meal ? `${Math.round(meal.totals.kcal)} kcal · ${Math.round(meal.totals.p)}g P` : (lang==="ka"?"შექმენი დღიური გეგმა":"Generate today's plan")}</div>
+            </div>
+            <ChevronRight size={16} color={C.steel}/>
+          </div>
+        })}
+      </div>
+    </div>
+  );
+}
+
 /* ---------------------------------- NUTRITION ---------------------------------- */
 function NutritionView({ t, lang, state, targets, toggleHaveFood, generateMealPlan, swapMealForGeorgianDish, todayLog, addFoodLogEntry, removeFoodLogEntry, onToast, todayCalories, applyDietCorrection, cancelDietCorrection, toggleMealLock, logMealToFoodLog }) {
   const [subTab, setSubTab] = useState("plan");
@@ -2332,6 +2464,8 @@ function NutritionView({ t, lang, state, targets, toggleHaveFood, generateMealPl
           ))}
         </div>
       </div>
+
+      <NutritionTimeline t={t} lang={lang} plan={state.mealPlan} />
 
       {correction ? (
         <div className="mb-5 px-4 py-3 rounded-xl text-xs" style={{ background: C.warningDim, border: `1px solid ${C.warning}`, color: C.text }}>
@@ -2420,7 +2554,9 @@ function MealCard({ t, lang, m, hasGeorgianOnHand, onSwap }) {
   const recipe = !isGeorgianDish ? generateRecipe(m.items, lang) : null;
 
   return (
-    <div className="p-4 rounded-2xl" style={{ background: C.glass, border: `1.5px solid ${C.border}` }}>
+    <div className="rounded-2xl overflow-hidden" style={{ background: C.glass, border: `1.5px solid ${C.border}` }}>
+      <img src={MEAL_VISUALS[m.key] || MEAL_VISUALS.lunch} alt={t[m.key]} style={{width:"100%",height:150,objectFit:"cover",display:"block"}} />
+      <div className="p-4">
       <div className="flex items-center justify-between mb-2">
         <div className="disp text-base font-semibold" style={{ color: C.text }}>{t[m.key]}</div>
         <div className="text-xs tabular" style={{ color: C.blueBright }}>{Math.round(m.totals.kcal)} kcal</div>
@@ -2467,6 +2603,7 @@ function MealCard({ t, lang, m, hasGeorgianOnHand, onSwap }) {
           ) : null}
         </div>
       )}
+      </div>
     </div>
   );
 }
@@ -2844,7 +2981,9 @@ function ProgressView({ t, lang, weightUnit, sex, profile, state, streak, longes
 
       {/* Physique avatar + ranks */}
       {(() => { const pp = physiqueProgress(state, streak); return <div className="mb-6"><div className="liquidHero p-5 flex items-center gap-4" style={{ background: "radial-gradient(circle at 15% 0%, rgba(76,141,255,0.12), transparent 42%), linear-gradient(160deg, rgba(255,255,255,0.055), rgba(255,255,255,0.018))", border: `1px solid ${C.border}`, backdropFilter: "blur(28px) saturate(180%)", borderRadius: 30, boxShadow: `inset 0 1.5px 0 rgba(255,255,255,${C === C_LIGHT ? 0.5 : 0.18}), inset 0 -1px 0 rgba(0,0,0,0.08)` }}>
-        <PixelAvatar sex={sex} tier={tier} size={92} />
+        <div className="shrink-0 overflow-hidden rounded-2xl" style={{width:104,height:138,border:`1px solid ${C.borderStrong}`,background:C.card}}>
+          <img src={sex==="female"?"./profile-media/female-front.jpg":"./profile-media/male-front.jpg"} alt="" style={{width:"100%",height:"100%",objectFit:"cover",objectPosition:"center top"}}/>
+        </div>
         <div>
           <div className="text-[11px] uppercase tracking-widest mb-1" style={{ color: C.blueBright }}>{t.physique}</div>
           <div className="disp text-xl font-bold mb-1" style={{ color: C.text }}>{t[TIER_LABEL_KEYS[tier]]}</div>
@@ -2969,12 +3108,13 @@ function RecoveryForm({ t, lang, existing, onSubmit }) {
 }
 
 /* ---------------------------------- PROFILE ---------------------------------- */
-function ProfileView({ t, lang, draftProfile, setDraftProfile, onSave, setLang, setTheme, onShowEquipment, dislikedIds, onRestore }) {
+function ProfileView({ t, lang, draftProfile, setDraftProfile, onSave, setLang, setTheme, onShowEquipment, onOpenCardio, dislikedIds, onRestore }) {
   const p = draftProfile;
   const set = (k, v) => setDraftProfile((d) => ({ ...d, [k]: v }));
   const ftin = cmToFtIn(p.heightCm);
   return (
     <div className="flex flex-col gap-4">
+      {onOpenCardio && <button onClick={onOpenCardio} className="p-4 rounded-2xl flex items-center justify-between" style={{background:"linear-gradient(135deg,rgba(76,141,255,.14),rgba(255,255,255,.035))",border:`1px solid ${C.borderStrong}`}}><div className="flex items-center gap-3"><Gauge size={20} color={C.blueBright}/><div className="text-left"><div className="font-semibold" style={{color:C.text}}>{t.navCardio}</div><div className="text-[11px]" style={{color:C.steel}}>{lang==="ka"?"კარდიო, წყალი და სესიის ჟურნალი":"Cardio, hydration and session log"}</div></div></div><ChevronRight size={16} color={C.steel}/></button>}
       <div className="p-4 rounded-2xl flex items-center justify-between" style={{ background: C.glass, border: `1.5px solid ${C.border}` }}>
         <div className="flex items-center gap-2"><Globe size={16} color={C.blue} /><span className="text-sm font-semibold" style={{ color: C.text }}>{t.language}</span></div>
         <SegButton options={[{ v: "en", l: "English" }, { v: "ka", l: "ქართული" }]} value={p.lang} onChange={setLang} />

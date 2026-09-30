@@ -44,6 +44,40 @@ jobs:
           fetch lunge.jpg "Fitness%20enthusiast%20performing%20a%20lunge%20exercise%20with%20a%20weight%20plate%20in%20a%20gym%20environment.jpg"
           fetch leg-curl.jpg "LyingLegCurlMachineExercise.JPG"
           fetch calf-raise.jpg "SeatedCalfRaiseMachineExercise.JPG"
+          # High-quality sex-specific workout imagery
+          curl -L --fail --retry 4 "https://images.pexels.com/photos/7289370/pexels-photo-7289370.jpeg?auto=compress&cs=tinysrgb&w=1280" -o public/exercise-media/male-shoulder.jpg
+          curl -L --fail --retry 4 "https://images.pexels.com/photos/32695897/pexels-photo-32695897.jpeg?auto=compress&cs=tinysrgb&w=1280" -o public/exercise-media/male-cable.jpg
+          curl -L --fail --retry 4 "https://images.pexels.com/photos/14598861/pexels-photo-14598861.jpeg?auto=compress&cs=tinysrgb&w=1280" -o public/exercise-media/male-bench.jpg
+          curl -L --fail --retry 4 "https://images.pexels.com/photos/5327510/pexels-photo-5327510.jpeg?auto=compress&cs=tinysrgb&w=1280" -o public/exercise-media/male-triceps.jpg
+          curl -L --fail --retry 4 "https://images.pexels.com/photos/10551491/pexels-photo-10551491.jpeg?auto=compress&cs=tinysrgb&w=1280" -o public/exercise-media/male-row.jpg
+          curl -L --fail --retry 4 "https://images.pexels.com/photos/4162480/pexels-photo-4162480.jpeg?auto=compress&cs=tinysrgb&w=1280" -o public/exercise-media/male-curl.jpg
+          curl -L --fail --retry 4 "https://images.pexels.com/photos/19254709/pexels-photo-19254709.jpeg?auto=compress&cs=tinysrgb&w=1280" -o public/exercise-media/male-legpress.jpg
+          curl -L --fail --retry 4 "https://images.pexels.com/photos/5327530/pexels-photo-5327530.jpeg?auto=compress&cs=tinysrgb&w=1280" -o public/exercise-media/male-squat.jpg
+          cp public/exercise-media/dip.jpg public/exercise-media/male-dip.jpg
+          cp public/exercise-media/pushup.jpg public/exercise-media/male-pushup.jpg
+          cp public/exercise-media/lat-pulldown.jpg public/exercise-media/male-pulldown.jpg
+
+          # Female set
+          cp public/exercise-media/shoulder-press.jpg public/exercise-media/female-shoulder.jpg
+          cp public/exercise-media/cable-row.jpg public/exercise-media/female-row.jpg
+          fetch female-gym.jpg "Woman%20exercising%20in%20the%20gym.jpg"
+          fetch female-leg.jpg "Woman%20playing%20weights%20with%20legs%20on%20the%20exercise%20machine%20in%20the%20gym.jpg"
+          fetch female-squat.jpg "Woman%20doing%20squat%20workout%20in%20gym%20with%20barbell.jpg"
+
+          # Nutrition photos shown in the reference UI
+          mkdir -p public/meal-media public/profile-media
+          fetchmeal() { out="$1"; name="$2"; curl -L --fail --retry 4 --retry-delay 2 "https://commons.wikimedia.org/wiki/Special:Redirect/file/$name?width=1280" -o "public/meal-media/$out"; test -s "public/meal-media/$out"; }
+          fetchmeal oatmeal.jpg "Oatmeal%20with%20Berries.jpg"
+          fetchmeal chicken-rice.jpg "Liat%20Portal%20for%20Foodie%20Disorder%20-%20Grilled%20chicken%20with%20rice%20and%20vegetables.jpg"
+          fetchmeal yogurt.jpg "Yogurt%20fruit%20bowl.jpg"
+          fetchmeal salmon.jpg "Salmon%20%2B%20Veggies%20%2844493005854%29.jpg"
+
+          # Sex-matched dashboard / physique photos
+          curl -L --fail --retry 4 "https://commons.wikimedia.org/wiki/Special:Redirect/file/Gymming%20in%20Accra.jpg?width=1280" -o public/profile-media/male-front.jpg
+          curl -L --fail --retry 4 "https://commons.wikimedia.org/wiki/Special:Redirect/file/Back%20view%20of%20young%20and%20attractive%20man%20doing%20leg%20with%20machine%20in%20gym.jpg?width=1280" -o public/profile-media/male-back.jpg
+          curl -L --fail --retry 4 "https://commons.wikimedia.org/wiki/Special:Redirect/file/Hattie%20James%20Women%27s%20fitness%20Gym%20girl%2C%20Gym%20Model%2C%20Fitness%20model%2003.jpg?width=1280" -o public/profile-media/female-front.jpg
+          curl -L --fail --retry 4 "https://commons.wikimedia.org/wiki/Special:Redirect/file/Woman%20doing%20squat%20workout%20in%20gym%20with%20barbell.jpg?width=1280" -o public/profile-media/female-back.jpg
+
           echo "Embedded exercise media:"
           ls -lh public/exercise-media
 
@@ -55,9 +89,17 @@ jobs:
           test -f dist/exercise-media/bench-press.jpg
           test -f dist/exercise-media/lat-pulldown.jpg
           test -f dist/exercise-media/leg-press.jpg
+          test -f dist/exercise-media/male-bench.jpg
+          test -f dist/exercise-media/male-shoulder.jpg
+          test -f dist/exercise-media/male-squat.jpg
+          test -f dist/exercise-media/female-shoulder.jpg
+          test -f dist/meal-media/oatmeal.jpg
+          test -f dist/meal-media/chicken-rice.jpg
+          test -f dist/profile-media/male-front.jpg
+          test -f dist/profile-media/female-front.jpg
           count=$(find dist/exercise-media -type f | wc -l)
           echo "Exercise photos in dist: $count"
-          test "$count" -ge 15
+          test "$count" -ge 25
 
       - name: Replace Android web assets
         run: |

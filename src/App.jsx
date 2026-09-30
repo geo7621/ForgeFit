@@ -1277,55 +1277,46 @@ function OverviewBlock({icon,title,children}){return <div className="liquidCard 
 
 
 const EXERCISE_MEDIA_BY_PATTERN = {
-  raise: { file: "DumbbellLateralRaise.JPG", credit: "George Stepanek", license: "CC BY-SA 3.0" },
-  press: { file: "Strong woman performs shoulder press exercise in fitness gym during afternoon workout session.jpg", credit: "Nenad Stojković", license: "CC BY 2.0" },
-  flye: { file: "Chest flies with cable machine - cable crossover flies.jpg", credit: "Nenad Stojković", license: "CC BY 2.0" },
-  dip: { file: "Dip Exercise.jpg", credit: "Fort Drum & 10th Mountain Division", license: "Public domain" },
-  pushup: { file: "Airman doing pushup.JPG", credit: "U.S. Air Force", license: "Public domain" },
-  extension: { file: "Resistance training develops functional strength (9834695).jpg", credit: "U.S. Army / Sgt. Deziree Keay", license: "Public domain" },
-  pulldown: { file: "Back Pull down.jpg", credit: "Aliva Sahoo", license: "CC BY-SA 4.0" },
-  row: { file: "Woman using a seated cable row machine at the gym.jpg", credit: "Miguel Angel Omaña Rojas", license: "Wikimedia Commons" },
-  curl: { file: "Bicep Curl.jpg", credit: "Hipnotic88", license: "Wikimedia Commons" },
-  legext: { file: "Leg Extension.jpg", credit: "Aliva Sahoo", license: "CC BY-SA 4.0" },
-  squat: { file: "Fitness enthusiast performing a lunge exercise with a weight plate in a gym environment.jpg", credit: "Nenad Stojković", license: "CC BY 2.0" },
-  legcurl: { file: "LyingLegCurlMachineExercise.JPG", credit: "George Stepanek", license: "CC BY-SA 3.0" },
-  hinge: { file: "US Navy 100514-N-0475R-578 Builder 2nd Class Eric Clark, from Belding, Mich., assigned to Naval Mobile Construction Battalion (NMCB) 5.jpg", credit: "U.S. Navy / Ace Rheaume", license: "Public domain" },
-  thrust: { file: "Drop con cadera.webm", credit: "Fabiola Mastache", license: "CC BY-SA 4.0", kind: "video" },
-  kickback: { file: "Woman exercising with resistance band in a gym setting.jpg", credit: "Shixart1985", license: "Wikimedia Commons" },
-  lateral: { file: "Woman exercising with resistance band in a gym setting.jpg", credit: "Shixart1985", license: "Wikimedia Commons" },
-  facepull: { file: "Woman using a seated cable row machine at the gym.jpg", credit: "Miguel Angel Omaña Rojas", license: "Wikimedia Commons" },
-  calf: { file: "SeatedCalfRaiseMachineExercise.JPG", credit: "George Stepanek", license: "CC BY-SA 3.0" },
+  raise: { file: "lateral-raise.jpg", source: "DumbbellLateralRaise.JPG", credit: "George Stepanek", license: "CC BY-SA 3.0" },
+  press: { file: "shoulder-press.jpg", source: "Strong woman performs shoulder press exercise in fitness gym during afternoon workout session.jpg", credit: "Nenad Stojković", license: "CC BY 2.0" },
+  flye: { file: "cable-fly.jpg", source: "Chest flies with cable machine - cable crossover flies.jpg", credit: "Nenad Stojković", license: "CC BY 2.0" },
+  dip: { file: "dip.jpg", source: "Dip Exercise.jpg", credit: "Fort Drum & 10th Mountain Division", license: "Public domain" },
+  pushup: { file: "pushup.jpg", source: "Airman doing pushup.JPG", credit: "U.S. Air Force / A1C Grace Lee", license: "Public domain" },
+  extension: { file: "triceps-extension.jpg", source: "Role doing cable tricep extension exercise.jpg", credit: "PTPioneer", license: "Wikimedia Commons" },
+  pulldown: { file: "lat-pulldown.jpg", source: "Back Pull down.jpg", credit: "Aliva Sahoo", license: "CC BY-SA 4.0" },
+  row: { file: "cable-row.jpg", source: "Woman using a seated cable row machine at the gym.jpg", credit: "Miguel Angel Omaña Rojas", license: "Wikimedia Commons" },
+  curl: { file: "biceps-curl.jpg", source: "Bicep Curl.jpg", credit: "Hipnotic88", license: "Wikimedia Commons" },
+  legext: { file: "leg-extension.jpg", source: "Leg Extension.jpg", credit: "Aliva Sahoo", license: "CC BY-SA 4.0" },
+  squat: { file: "lunge.jpg", source: "Fitness enthusiast performing a lunge exercise with a weight plate in a gym environment.jpg", credit: "Nenad Stojković", license: "CC BY 2.0" },
+  legcurl: { file: "leg-curl.jpg", source: "LyingLegCurlMachineExercise.JPG", credit: "George Stepanek", license: "CC BY-SA 3.0" },
+  hinge: { file: "lunge.jpg", source: "Fitness enthusiast performing a lunge exercise with a weight plate in a gym environment.jpg", credit: "Nenad Stojković", license: "CC BY 2.0" },
+  thrust: { file: "leg-press.jpg", source: "Young man using a leg press machine at the gym.jpg", credit: "Nenad Stojković", license: "CC BY 2.0" },
+  kickback: { file: "lunge.jpg", source: "Fitness enthusiast performing a lunge exercise with a weight plate in a gym environment.jpg", credit: "Nenad Stojković", license: "CC BY 2.0" },
+  lateral: { file: "lateral-raise.jpg", source: "DumbbellLateralRaise.JPG", credit: "George Stepanek", license: "CC BY-SA 3.0" },
+  facepull: { file: "cable-row.jpg", source: "Woman using a seated cable row machine at the gym.jpg", credit: "Miguel Angel Omaña Rojas", license: "Wikimedia Commons" },
+  calf: { file: "calf-raise.jpg", source: "SeatedCalfRaiseMachineExercise.JPG", credit: "George Stepanek", license: "CC BY-SA 3.0" },
 };
 
 const EXERCISE_MEDIA_BY_ID = {
-  "chest-1": { file: "Bench Press.jpg", credit: "Aditya Oberai", license: "CC BY-SA 4.0" },
-  "chest-2": { file: "Chest flies with cable machine - cable crossover flies.jpg", credit: "Nenad Stojković", license: "CC BY 2.0" },
-  "chest-3": { file: "Strong woman performs shoulder press exercise in fitness gym during afternoon workout session.jpg", credit: "Nenad Stojković", license: "CC BY 2.0" },
-  "chest-4": { file: "Lee Priest Sam's Fitness Pec Fly.jpg", credit: "Sam's Fitness / Wikimedia Commons", license: "Wikimedia Commons" },
-  "chest-5": { file: "Dip Exercise.jpg", credit: "Fort Drum & 10th Mountain Division", license: "Public domain" },
-  "chest-6": { file: "Airman doing pushup.JPG", credit: "U.S. Air Force", license: "Public domain" },
-  "tri-1": { file: "Role doing cable tricep extension exercise.jpg", credit: "PTPioneer", license: "Wikimedia Commons" },
-  "tri-3": { file: "Resistance training develops functional strength (9834695).jpg", credit: "U.S. Army / Sgt. Deziree Keay", license: "Public domain" },
-  "back-warmup": { file: "Back Pull down.jpg", credit: "Aliva Sahoo", license: "CC BY-SA 4.0" },
-  "back-5": { file: "Girl doing lat pulldown exercise.jpg", credit: "Tyler Read / PTPioneer", license: "Wikimedia Commons" },
-  "back-4": { file: "Woman using a seated cable row machine at the gym.jpg", credit: "Miguel Angel Omaña Rojas", license: "Wikimedia Commons" },
-  "bi-1": { file: "Preacher curl.webp", credit: "SALlM BlN YOUSUF", license: "CC BY 4.0" },
-  "quad-2": { file: "Young man using a leg press machine at the gym.jpg", credit: "Nenad Stojković", license: "CC BY 2.0" },
-  "quad-3": { file: "SETAF-AF conducts sergeant’s time circuit training (9082703).jpg", credit: "U.S. Army / Sgt. Kylejian Francia", license: "Public domain" },
-  "quad-6": { file: "Fitness enthusiast performing a lunge exercise with a weight plate in a gym environment.jpg", credit: "Nenad Stojković", license: "CC BY 2.0" },
-  "quad-7": { file: "Airman performing lunge.jpg", credit: "U.S. Air Force / SrA Myles Stepp", license: "Public domain" },
-  "ham-1": { file: "US Navy 100514-N-0475R-578 Builder 2nd Class Eric Clark, from Belding, Mich., assigned to Naval Mobile Construction Battalion (NMCB) 5.jpg", credit: "U.S. Navy / Ace Rheaume", license: "Public domain" },
-  "ham-3": { file: "SETAF-AF conducts sergeant’s time circuit training (9082703).jpg", credit: "U.S. Army / Sgt. Kylejian Francia", license: "Public domain" },
-  "ham-4": { file: "LyingLegCurlMachineExercise.JPG", credit: "George Stepanek", license: "CC BY-SA 3.0" },
-  "ham-8": { file: "Woman exercising with resistance band in a gym setting.jpg", credit: "Shixart1985", license: "Wikimedia Commons" },
-  "sh-1": { file: "DumbbellLateralRaise.JPG", credit: "George Stepanek", license: "CC BY-SA 3.0" },
-  "sh-2": { file: "Strong woman performs shoulder press exercise in fitness gym during afternoon workout session.jpg", credit: "Nenad Stojković", license: "CC BY 2.0" },
-  "sh-4": { file: "DumbbellLateralRaise.JPG", credit: "George Stepanek", license: "CC BY-SA 3.0" },
-  "calf-2": { file: "SeatedCalfRaiseMachineExercise.JPG", credit: "George Stepanek", license: "CC BY-SA 3.0" },
+  "chest-1": { file: "bench-press.jpg", source: "Bench Press (4517332).jpg", credit: "U.S. Army / 173rd Airborne Brigade", license: "Public domain" },
+  "chest-2": { file: "cable-fly.jpg", source: "Chest flies with cable machine - cable crossover flies.jpg", credit: "Nenad Stojković", license: "CC BY 2.0" },
+  "chest-3": { file: "shoulder-press.jpg", source: "Strong woman performs shoulder press exercise in fitness gym during afternoon workout session.jpg", credit: "Nenad Stojković", license: "CC BY 2.0" },
+  "chest-5": { file: "dip.jpg", source: "Dip Exercise.jpg", credit: "Fort Drum & 10th Mountain Division", license: "Public domain" },
+  "chest-6": { file: "pushup.jpg", source: "Airman doing pushup.JPG", credit: "U.S. Air Force / A1C Grace Lee", license: "Public domain" },
+  "tri-1": { file: "triceps-extension.jpg", source: "Role doing cable tricep extension exercise.jpg", credit: "PTPioneer", license: "Wikimedia Commons" },
+  "back-warmup": { file: "lat-pulldown.jpg", source: "Back Pull down.jpg", credit: "Aliva Sahoo", license: "CC BY-SA 4.0" },
+  "back-4": { file: "cable-row.jpg", source: "Woman using a seated cable row machine at the gym.jpg", credit: "Miguel Angel Omaña Rojas", license: "Wikimedia Commons" },
+  "bi-1": { file: "biceps-curl.jpg", source: "Bicep Curl.jpg", credit: "Hipnotic88", license: "Wikimedia Commons" },
+  "quad-2": { file: "leg-press.jpg", source: "Young man using a leg press machine at the gym.jpg", credit: "Nenad Stojković", license: "CC BY 2.0" },
+  "quad-6": { file: "lunge.jpg", source: "Fitness enthusiast performing a lunge exercise with a weight plate in a gym environment.jpg", credit: "Nenad Stojković", license: "CC BY 2.0" },
+  "ham-4": { file: "leg-curl.jpg", source: "LyingLegCurlMachineExercise.JPG", credit: "George Stepanek", license: "CC BY-SA 3.0" },
+  "sh-1": { file: "lateral-raise.jpg", source: "DumbbellLateralRaise.JPG", credit: "George Stepanek", license: "CC BY-SA 3.0" },
+  "sh-2": { file: "shoulder-press.jpg", source: "Strong woman performs shoulder press exercise in fitness gym during afternoon workout session.jpg", credit: "Nenad Stojković", license: "CC BY 2.0" },
+  "calf-2": { file: "calf-raise.jpg", source: "SeatedCalfRaiseMachineExercise.JPG", credit: "George Stepanek", license: "CC BY-SA 3.0" },
 };
 
-function commonsMediaUrl(file) {
-  return `https://commons.wikimedia.org/wiki/Special:Redirect/file/${encodeURIComponent(file)}`;
+function localExerciseMediaUrl(file) {
+  return `./exercise-media/${file}`;
 }
 function commonsPageUrl(file) {
   return `https://commons.wikimedia.org/wiki/File:${encodeURIComponent(file.replace(/ /g, "_"))}`;
@@ -1344,7 +1335,7 @@ function ForgeExerciseVisual({ ex, lang }) {
         {!mediaFailed && media.kind === "video" && (
           <video
             key={media.file}
-            src={commonsMediaUrl(media.file)}
+            src={localExerciseMediaUrl(media.file)}
             autoPlay loop muted playsInline preload="metadata"
             onError={() => setMediaFailed(true)}
             style={{ width: "100%", height: 190, objectFit: "cover", display: "block" }}
@@ -1353,7 +1344,7 @@ function ForgeExerciseVisual({ ex, lang }) {
         {!mediaFailed && media.kind !== "video" && (
           <img
             key={media.file}
-            src={commonsMediaUrl(media.file)}
+            src={localExerciseMediaUrl(media.file)}
             alt={L(ex.name, lang)}
             loading="lazy"
             onError={() => setMediaFailed(true)}
@@ -1374,7 +1365,7 @@ function ForgeExerciseVisual({ ex, lang }) {
       <div className="p-3">
         <MoveDemo pattern={ex.pattern} lang={lang} />
         <a
-          href={commonsPageUrl(media.file)}
+          href={commonsPageUrl(media.source)}
           className="block mt-2 text-[9px] leading-relaxed"
           style={{ color: C.steel, opacity: .82, textDecoration: "none" }}
         >

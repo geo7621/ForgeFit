@@ -24,8 +24,40 @@ jobs:
       - name: Install web dependencies
         run: npm install
 
+      - name: Download embedded exercise photos
+        run: |
+          set -euo pipefail
+          mkdir -p public/exercise-media
+          fetch() { out="$1"; name="$2"; curl -L --fail --retry 4 --retry-delay 2 --connect-timeout 20 --max-time 180 "https://commons.wikimedia.org/wiki/Special:Redirect/file/$name?width=960" -o "public/exercise-media/$out"; test -s "public/exercise-media/$out"; }
+          fetch bench-press.jpg "Bench%20Press%20%284517332%29.jpg"
+          fetch lateral-raise.jpg "DumbbellLateralRaise.JPG"
+          fetch shoulder-press.jpg "Strong%20woman%20performs%20shoulder%20press%20exercise%20in%20fitness%20gym%20during%20afternoon%20workout%20session.jpg"
+          fetch cable-fly.jpg "Chest%20flies%20with%20cable%20machine%20-%20cable%20crossover%20flies.jpg"
+          fetch dip.jpg "Dip%20Exercise.jpg"
+          fetch pushup.jpg "Airman%20doing%20pushup.JPG"
+          fetch triceps-extension.jpg "Role%20doing%20cable%20tricep%20extension%20exercise.jpg"
+          fetch lat-pulldown.jpg "Back%20Pull%20down.jpg"
+          fetch cable-row.jpg "Woman%20using%20a%20seated%20cable%20row%20machine%20at%20the%20gym.jpg"
+          fetch biceps-curl.jpg "Bicep%20Curl.jpg"
+          fetch leg-extension.jpg "Leg%20Extension.jpg"
+          fetch leg-press.jpg "Young%20man%20using%20a%20leg%20press%20machine%20at%20the%20gym.jpg"
+          fetch lunge.jpg "Fitness%20enthusiast%20performing%20a%20lunge%20exercise%20with%20a%20weight%20plate%20in%20a%20gym%20environment.jpg"
+          fetch leg-curl.jpg "LyingLegCurlMachineExercise.JPG"
+          fetch calf-raise.jpg "SeatedCalfRaiseMachineExercise.JPG"
+          echo "Embedded exercise media:"
+          ls -lh public/exercise-media
+
       - name: Build ForgeFit web app
         run: npm run build
+
+      - name: Verify exercise photos are in web build
+        run: |
+          test -f dist/exercise-media/bench-press.jpg
+          test -f dist/exercise-media/lat-pulldown.jpg
+          test -f dist/exercise-media/leg-press.jpg
+          count=$(find dist/exercise-media -type f | wc -l)
+          echo "Exercise photos in dist: $count"
+          test "$count" -ge 15
 
       - name: Replace Android web assets
         run: |

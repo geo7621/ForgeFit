@@ -10,8 +10,8 @@ android {
         applicationId = "com.forgefit.premium"
         minSdk = 26
         targetSdk = 35
-        versionCode = 3
-        versionName = "0.2.1"
+        versionCode = 4
+        versionName = "0.2.2"
     }
 
     buildTypes {
@@ -23,4 +23,5 @@ android {
 
 dependencies {
     implementation("androidx.core:core:1.15.0")
+    implementation("androidx.webkit:webkit:1.12.1")
 }

@@ -1275,17 +1275,114 @@ function ProgramOverview({ t, lang, profile, focus, exercises, weekFocus, onStar
 function GlassStat({label,value}){return <div className="glassInset p-3"><div className="disp text-2xl font-bold" style={{color:C.text}}>{value}</div><div className="text-[10px] uppercase tracking-wider" style={{color:C.steel}}>{label}</div></div>}
 function OverviewBlock({icon,title,children}){return <div className="liquidCard p-4 mb-3"><div className="flex items-center gap-2 mb-2 text-sm font-semibold" style={{color:C.blueBright}}>{icon}{title}</div><div className="text-xs leading-relaxed" style={{color:C.steel}}>{children}</div></div>}
 
+
+const EXERCISE_MEDIA_BY_PATTERN = {
+  raise: { file: "DumbbellLateralRaise.JPG", credit: "George Stepanek", license: "CC BY-SA 3.0" },
+  press: { file: "Strong woman performs shoulder press exercise in fitness gym during afternoon workout session.jpg", credit: "Nenad Stojković", license: "CC BY 2.0" },
+  flye: { file: "Chest flies with cable machine - cable crossover flies.jpg", credit: "Nenad Stojković", license: "CC BY 2.0" },
+  dip: { file: "Dip Exercise.jpg", credit: "Fort Drum & 10th Mountain Division", license: "Public domain" },
+  pushup: { file: "Airman doing pushup.JPG", credit: "U.S. Air Force", license: "Public domain" },
+  extension: { file: "Resistance training develops functional strength (9834695).jpg", credit: "U.S. Army / Sgt. Deziree Keay", license: "Public domain" },
+  pulldown: { file: "Back Pull down.jpg", credit: "Aliva Sahoo", license: "CC BY-SA 4.0" },
+  row: { file: "Woman using a seated cable row machine at the gym.jpg", credit: "Miguel Angel Omaña Rojas", license: "Wikimedia Commons" },
+  curl: { file: "Bicep Curl.jpg", credit: "Hipnotic88", license: "Wikimedia Commons" },
+  legext: { file: "Leg Extension.jpg", credit: "Aliva Sahoo", license: "CC BY-SA 4.0" },
+  squat: { file: "Fitness enthusiast performing a lunge exercise with a weight plate in a gym environment.jpg", credit: "Nenad Stojković", license: "CC BY 2.0" },
+  legcurl: { file: "LyingLegCurlMachineExercise.JPG", credit: "George Stepanek", license: "CC BY-SA 3.0" },
+  hinge: { file: "US Navy 100514-N-0475R-578 Builder 2nd Class Eric Clark, from Belding, Mich., assigned to Naval Mobile Construction Battalion (NMCB) 5.jpg", credit: "U.S. Navy / Ace Rheaume", license: "Public domain" },
+  thrust: { file: "Drop con cadera.webm", credit: "Fabiola Mastache", license: "CC BY-SA 4.0", kind: "video" },
+  kickback: { file: "Woman exercising with resistance band in a gym setting.jpg", credit: "Shixart1985", license: "Wikimedia Commons" },
+  lateral: { file: "Woman exercising with resistance band in a gym setting.jpg", credit: "Shixart1985", license: "Wikimedia Commons" },
+  facepull: { file: "Woman using a seated cable row machine at the gym.jpg", credit: "Miguel Angel Omaña Rojas", license: "Wikimedia Commons" },
+  calf: { file: "SeatedCalfRaiseMachineExercise.JPG", credit: "George Stepanek", license: "CC BY-SA 3.0" },
+};
+
+const EXERCISE_MEDIA_BY_ID = {
+  "chest-1": { file: "Bench Press.jpg", credit: "Aditya Oberai", license: "CC BY-SA 4.0" },
+  "chest-2": { file: "Chest flies with cable machine - cable crossover flies.jpg", credit: "Nenad Stojković", license: "CC BY 2.0" },
+  "chest-3": { file: "Strong woman performs shoulder press exercise in fitness gym during afternoon workout session.jpg", credit: "Nenad Stojković", license: "CC BY 2.0" },
+  "chest-4": { file: "Lee Priest Sam's Fitness Pec Fly.jpg", credit: "Sam's Fitness / Wikimedia Commons", license: "Wikimedia Commons" },
+  "chest-5": { file: "Dip Exercise.jpg", credit: "Fort Drum & 10th Mountain Division", license: "Public domain" },
+  "chest-6": { file: "Airman doing pushup.JPG", credit: "U.S. Air Force", license: "Public domain" },
+  "tri-1": { file: "Role doing cable tricep extension exercise.jpg", credit: "PTPioneer", license: "Wikimedia Commons" },
+  "tri-3": { file: "Resistance training develops functional strength (9834695).jpg", credit: "U.S. Army / Sgt. Deziree Keay", license: "Public domain" },
+  "back-warmup": { file: "Back Pull down.jpg", credit: "Aliva Sahoo", license: "CC BY-SA 4.0" },
+  "back-5": { file: "Girl doing lat pulldown exercise.jpg", credit: "Tyler Read / PTPioneer", license: "Wikimedia Commons" },
+  "back-4": { file: "Woman using a seated cable row machine at the gym.jpg", credit: "Miguel Angel Omaña Rojas", license: "Wikimedia Commons" },
+  "bi-1": { file: "Preacher curl.webp", credit: "SALlM BlN YOUSUF", license: "CC BY 4.0" },
+  "quad-2": { file: "Young man using a leg press machine at the gym.jpg", credit: "Nenad Stojković", license: "CC BY 2.0" },
+  "quad-3": { file: "SETAF-AF conducts sergeant’s time circuit training (9082703).jpg", credit: "U.S. Army / Sgt. Kylejian Francia", license: "Public domain" },
+  "quad-6": { file: "Fitness enthusiast performing a lunge exercise with a weight plate in a gym environment.jpg", credit: "Nenad Stojković", license: "CC BY 2.0" },
+  "quad-7": { file: "Airman performing lunge.jpg", credit: "U.S. Air Force / SrA Myles Stepp", license: "Public domain" },
+  "ham-1": { file: "US Navy 100514-N-0475R-578 Builder 2nd Class Eric Clark, from Belding, Mich., assigned to Naval Mobile Construction Battalion (NMCB) 5.jpg", credit: "U.S. Navy / Ace Rheaume", license: "Public domain" },
+  "ham-3": { file: "SETAF-AF conducts sergeant’s time circuit training (9082703).jpg", credit: "U.S. Army / Sgt. Kylejian Francia", license: "Public domain" },
+  "ham-4": { file: "LyingLegCurlMachineExercise.JPG", credit: "George Stepanek", license: "CC BY-SA 3.0" },
+  "ham-8": { file: "Woman exercising with resistance band in a gym setting.jpg", credit: "Shixart1985", license: "Wikimedia Commons" },
+  "sh-1": { file: "DumbbellLateralRaise.JPG", credit: "George Stepanek", license: "CC BY-SA 3.0" },
+  "sh-2": { file: "Strong woman performs shoulder press exercise in fitness gym during afternoon workout session.jpg", credit: "Nenad Stojković", license: "CC BY 2.0" },
+  "sh-4": { file: "DumbbellLateralRaise.JPG", credit: "George Stepanek", license: "CC BY-SA 3.0" },
+  "calf-2": { file: "SeatedCalfRaiseMachineExercise.JPG", credit: "George Stepanek", license: "CC BY-SA 3.0" },
+};
+
+function commonsMediaUrl(file) {
+  return `https://commons.wikimedia.org/wiki/Special:Redirect/file/${encodeURIComponent(file)}`;
+}
+function commonsPageUrl(file) {
+  return `https://commons.wikimedia.org/wiki/File:${encodeURIComponent(file.replace(/ /g, "_"))}`;
+}
+
 function ForgeExerciseVisual({ ex, lang }) {
- const meta=PATTERN_META[ex.pattern]||PATTERN_META.press; const horizontal=meta.axis==="horz";
- return <div className="exerciseVisual mt-3 mb-1"><svg viewBox="0 0 320 128" width="100%" height="128" role="img" aria-label={L(ex.name,lang)}>
-   <defs><linearGradient id={`g-${ex.id}`} x1="0" x2="1"><stop stopColor={C.blue} stopOpacity=".18"/><stop offset="1" stopColor={C.blueBright} stopOpacity=".03"/></linearGradient><filter id={`gl-${ex.id}`}><feGaussianBlur stdDeviation="4"/></filter></defs>
-   <rect x="1" y="1" width="318" height="126" rx="20" fill={`url(#g-${ex.id})`} stroke={C.border}/>
-   <g opacity=".35" stroke={C.blueBright} strokeDasharray="4 5"><path d={horizontal?"M78 64 H242":"M160 100 V28"}/></g>
-   <g transform="translate(78 18)" stroke={C.text} strokeWidth="4" strokeLinecap="round" fill="none" opacity=".65"><circle cx="28" cy="16" r="10"/><path d="M28 28 L28 62 M28 38 L10 53 M28 38 L48 52 M28 62 L14 92 M28 62 L45 92"/></g>
-   <g transform="translate(205 18)" stroke={C.blueBright} strokeWidth="4" strokeLinecap="round" fill="none"><circle cx="28" cy="16" r="10"/><path d={ex.pattern==="squat"?"M28 28 L24 58 M24 58 L8 78 M24 58 L47 77 M8 78 L2 96 M47 77 L58 95 M28 38 L9 48 M28 38 L49 48":ex.pattern==="hinge"?"M28 28 L10 55 M10 55 L28 78 M28 78 L16 96 M28 78 L48 96 M18 43 L2 61 M18 43 L37 58":"M28 28 L28 62 M28 38 L8 45 M28 38 L50 45 M28 62 L14 92 M28 62 L45 92"}/></g>
-   <path d={horizontal?"M130 64 H188":"M160 88 V40"} stroke={C.blue} strokeWidth="3" strokeLinecap="round"/><path d={horizontal?"M188 64 l-9-6 v12 z":"M160 40 l-6 9 h12 z"} fill={C.blue}/>
-   <text x="18" y="116" fill={C.steel} fontSize="10">{L(meta.a,lang)}</text><text x="302" y="116" textAnchor="end" fill={C.blueBright} fontSize="10">{L(meta.b,lang)}</text>
- </svg></div>
+  const media = EXERCISE_MEDIA_BY_ID[ex.id] || EXERCISE_MEDIA_BY_PATTERN[ex.pattern] || EXERCISE_MEDIA_BY_PATTERN.press;
+  const [mediaFailed, setMediaFailed] = useState(false);
+  useEffect(() => setMediaFailed(false), [media.file]);
+  const realLabel = lang === "ka" ? "რეალური საცნობარო მასალა" : "Real exercise reference";
+  const sourceLabel = lang === "ka" ? "წყარო" : "Source";
+
+  return (
+    <div className="exerciseVisual mt-3 mb-1 overflow-hidden" style={{ borderRadius: 20, border: `1px solid ${C.border}`, background: "rgba(4,8,18,.78)" }}>
+      <div className="relative overflow-hidden" style={{ minHeight: 176, background: "linear-gradient(135deg,rgba(76,141,255,.16),rgba(5,7,13,.92))" }}>
+        {!mediaFailed && media.kind === "video" && (
+          <video
+            key={media.file}
+            src={commonsMediaUrl(media.file)}
+            autoPlay loop muted playsInline preload="metadata"
+            onError={() => setMediaFailed(true)}
+            style={{ width: "100%", height: 190, objectFit: "cover", display: "block" }}
+          />
+        )}
+        {!mediaFailed && media.kind !== "video" && (
+          <img
+            key={media.file}
+            src={commonsMediaUrl(media.file)}
+            alt={L(ex.name, lang)}
+            loading="lazy"
+            onError={() => setMediaFailed(true)}
+            style={{ width: "100%", height: 190, objectFit: "cover", display: "block", filter: "saturate(.88) contrast(1.03)" }}
+          />
+        )}
+        {mediaFailed && (
+          <div className="flex flex-col items-center justify-center gap-2" style={{ height: 176 }}>
+            <Dumbbell size={28} color={C.blueBright} />
+            <div className="text-xs" style={{ color: C.steel }}>{lang === "ka" ? "ფოტო ვერ ჩაიტვირთა — მოძრაობის გიდი ხელმისაწვდომია." : "Photo unavailable — movement guide is still available."}</div>
+          </div>
+        )}
+        <div style={{ position: "absolute", inset: 0, pointerEvents: "none", background: "linear-gradient(180deg,transparent 38%,rgba(3,5,10,.88) 100%)" }} />
+        <div className="absolute left-3 bottom-3 px-2.5 py-1.5 rounded-full text-[10px] font-semibold uppercase tracking-[.13em]" style={{ color: "#DDEBFF", background: "rgba(5,10,20,.66)", border: "1px solid rgba(143,184,255,.28)", backdropFilter: "blur(10px)" }}>
+          <Camera size={11} style={{ display: "inline", marginRight: 5, verticalAlign: "-2px" }} />{realLabel}
+        </div>
+      </div>
+      <div className="p-3">
+        <MoveDemo pattern={ex.pattern} lang={lang} />
+        <a
+          href={commonsPageUrl(media.file)}
+          className="block mt-2 text-[9px] leading-relaxed"
+          style={{ color: C.steel, opacity: .82, textDecoration: "none" }}
+        >
+          {sourceLabel}: Wikimedia Commons · {media.credit} · {media.license}
+        </a>
+      </div>
+    </div>
+  );
 }
 
 function FoodScanner({t,lang,addFoodLogEntry}){
@@ -2145,7 +2242,7 @@ function ExerciseCard({ t, lang, weightUnit, ex, checks, onToggle, best, goal, s
       </div>
 
       <ForgeExerciseVisual ex={ex} lang={lang} />
-      <div className="text-[10px] mt-1 italic" style={{ color: C.steel, opacity: 0.7 }}>{t.noAnimation}</div>
+      <div className="text-[10px] mt-1 italic" style={{ color: C.steel, opacity: 0.7 }}>{lang === "ka" ? "ფოტო/ვიდეო არის საცნობარო ვიზუალი; ზუსტი მოძრაობის მიმართულება ნაჩვენებია ქვემოთ." : "Photo/video is a visual reference; the exact movement path is shown below."}</div>
 
       {ex.setup && (
         <div className="mt-2 text-[12px]" style={{ color: C.steel }}>
